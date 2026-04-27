@@ -1,14 +1,15 @@
 # Paymob Authentication & Credentials
 
-## The three credentials
+## The four credentials
 
-Every Paymob integration requires three distinct values. They are not interchangeable.
+Every Paymob integration requires four distinct values. They are not interchangeable.
 
 | Credential | Where it lives | Used for |
 |------------|---------------|----------|
 | **Secret Key** | Server only — never client | `Authorization` header on all server-to-Paymob API calls |
 | **Public Key** | Client-side safe | Initializing the Pixel SDK or Hosted Checkout on the frontend |
 | **Integration ID(s)** | Server (in request body) | Identifying which payment method(s) to offer; one ID per method |
+| **HMAC Secret** | Server only — never client | Verifying the signature on incoming webhook callbacks |
 
 ## Secret Key
 
@@ -36,7 +37,7 @@ Authorization: Token <your_secret_key>
 
 ## HMAC Secret
 
-A fourth credential used exclusively for webhook verification. It is separate from the Secret Key.
+Used exclusively for webhook verification. It is separate from the Secret Key.
 
 - Found in: **Paymob Dashboard → Developers → HMAC Secret**
 - Used only on the server when verifying incoming webhook callback signatures

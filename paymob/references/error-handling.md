@@ -69,7 +69,7 @@ Common causes and fixes:
 |-------|-----|
 | Using the API Secret Key instead of the HMAC Secret | They are different. HMAC Secret is at **Dashboard → Developers → HMAC Secret** |
 | Wrong field order in concatenation | Order is exact — see `webhooks-hmac.md` for the required field list |
-| Missing fields in concatenation | All 21 fields must be included; missing any breaks the hash |
+| Missing fields in concatenation | All 20 fields must be included; missing any breaks the hash |
 | Fields from nested objects not extracted correctly | `order.id`, `source_data.pan`, `source_data.sub_type`, `source_data.type` must be extracted from nested objects |
 | Wrong hashing algorithm | Must be HMAC-SHA512 |
 | Encoding mismatch | Ensure string values are treated as plain strings; boolean/integer fields should be converted to their string representation (`"true"`, `"false"`, `"10000"`) |

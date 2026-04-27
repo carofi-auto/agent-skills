@@ -71,14 +71,16 @@ This is a separate credential from the API Secret Key. Do not confuse them — u
 2. Compute HMAC from callback body fields (exact order above)
 3. Compare with hmac query parameter
    → Mismatch: return HTTP 400, stop processing
-4. Check success field
-   → false: log the failure, update order to failed state
+4. Check pending field
+   → true: acknowledge (HTTP 200), do not fulfill yet — await the follow-up callback
+5. Check success field
+   → false: log the failure, update order to failed state, return HTTP 200
    → true: continue
-5. Verify amount_cents and currency match the expected order values
-6. Check idempotency — has this order already been fulfilled?
+6. Verify amount_cents and currency match the expected order values
+7. Check idempotency — has this order already been fulfilled?
    → Already fulfilled: return HTTP 200, stop (do not double-fulfill)
-7. Fulfill the order (update database, trigger downstream actions)
-8. Return HTTP 200
+8. Fulfill the order (update database, trigger downstream actions)
+9. Return HTTP 200
 ```
 
 ## Key callback fields
