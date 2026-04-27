@@ -5,6 +5,8 @@ description: "Use when integrating Paymob payment processing — creating paymen
 
 # Paymob Integration
 
+> **Attribution:** This skill is built on top of the official Paymob LLM knowledge base published at [paymob.com/llms.txt](https://paymob.com/llms.txt). All API knowledge, integration patterns, and flow documentation originate from Paymob's own documentation. Credit and thanks to the Paymob team for making their docs AI-agent-friendly.
+
 Paymob is the dominant payment processor in the MENA region, operating in Egypt, Saudi Arabia, UAE, Kuwait, Oman, Bahrain, Jordan, and Pakistan.
 
 ## When this skill activates
