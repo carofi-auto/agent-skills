@@ -21,6 +21,7 @@ npx skills add carofi-auto/agent-skills --skill <skill-name>
 | Skill | Description | Install |
 |-------|-------------|---------|
 | [paymob](./paymob) | Paymob payment integration for MENA — intentions, checkout flows, HMAC-verified webhooks, payment links | `npx skills add carofi-auto/agent-skills --skill paymob` |
+| [wd](./wd) | Post work-done announcements to Slack, create Trello cards, and log billable time to Clockify — with bulk backfill via `--rt` | `npx skills add carofi-auto/agent-skills --skill wd` |
 
 ## Contributing
 
