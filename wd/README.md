@@ -51,9 +51,10 @@ curl -s -H "X-Api-Key: <YOUR_API_KEY>" \
 
 | Flag | Alias | What it does |
 |---|---|---|
-| _(none)_ | | Full flow: Slack announcement + Trello card + Clockify time entry |
-| `--skip-time` | `--st` | Slack + Trello only. Skip Clockify. |
-| `--skip-post` | `--sp` | Clockify only. Skip Slack + Trello. |
+| _(none)_ | | Full flow: git PRs + Slack announcement + Trello card + Clockify time entry |
+| `--time-only` | `--to` | Clockify only. Skip everything else. |
+| `--pr-only` | `--pro` | Git workflow only. Skip Slack, Trello, Clockify. |
+| `--post-only` | `--po` | Slack + Trello only. Skip git and Clockify. |
 | `--time <duration>` | `--t <duration>` | Pass duration directly (e.g. `--time 3h`, `--t 1.5h`, `--t 45m`). No interactive question. |
 | `--range-time [range]` | `--rt [range]` | Bulk backfill: scan Slack for your announcements in the given period and batch-log to Clockify. No posting. |
 
@@ -72,8 +73,9 @@ curl -s -H "X-Api-Key: <YOUR_API_KEY>" \
 
 ```
 /wd --t 2h                       → full flow, 2h logged, no question
-/wd --st                         → Slack + Trello only, no Clockify
-/wd --sp --t 3h                  → Clockify only, 3h, no Slack/Trello
+/wd --po                         → Slack + Trello only, no Clockify
+/wd --to --t 3h                  → Clockify only, 3h, no Slack/Trello
+/wd --pro                        → git PRs only, no Slack/Trello/Clockify
 /wd --rt "last week"             → backfill last week to Clockify
 ```
 

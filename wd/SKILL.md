@@ -49,45 +49,49 @@ Map keywords found in repo names or the task title to a Clockify project ID. Ada
 
 ---
 
-## Parameters
+## Mode flags (parsed from args before doing anything)
 
-| Flag | Alias | Behavior |
+Three shorthand modes — pick one, or use no flag for the full package:
+
+| Flag | Alias | What runs |
 |---|---|---|
-| `--skip-time` | `--st` | Run normal Slack/Trello flow. Skip Clockify entirely. |
-| `--skip-post` | `--sp` | Skip Slack + Trello. Only log time to Clockify. |
-| `--time <duration>` | `--t <duration>` | Pre-supply duration (e.g. `--time 3h`, `--t 1.5h`, `--t 45m`). Skips the interactive duration question. |
-| `--range-time [range]` | `--rt [range]` | Bulk backfill mode. Scans Slack channel for the given range and batch-logs to Clockify. No Slack/Trello posting. Range defaults to "this month". |
+| _(none)_ | | **Full package**: git PRs + Slack/Trello + Clockify |
+| `--time-only` | `--to` | **Time only** — just log to Clockify. Skip everything else. |
+| `--pr-only` | `--pro` | **PRs only** — run git workflow only. Skip Slack, Trello, Clockify. |
+| `--post-only` | `--po` | **Post only** — Slack + Trello only. Skip git and Clockify. |
+| `--time <duration>` | `--t <duration>` | Pre-supply Clockify duration (e.g. `--t 3h`, `--t 1.5h`, `--t 45m`). Works with any mode. |
+| `--range-time [range]` | `--rt [range]` | Bulk Clockify backfill — see `--rt` flow below. |
 
 ---
 
-## Git workflow (only if PRs not yet open)
+## Git workflow (runs in full package and `--pr-only` mode only)
 
 Per repo: create `feature/<slug>` from `develop` → stage named files → commit (conventional, ≤72 char header) → push → find existing integration branch (`git branch -r | grep integration`, pick highest suffix) → open 2 PRs: `--base develop` and `--base integration/<branch>`.
 
 ---
 
-## Normal flow (no flags, or `--st`, or `--sp`)
+## Normal flow (full package — no mode flag)
 
 1. **Gather from context** — title, 1–2 line summary, PRs grouped by repo (base + URL), existing Trello card URL if any, bullet list of changes, extra CC names if specified.
 
-2. **Trello card** _(skip if `--sp`)_ — if card exists in context: use its ID (from URL slug). If not: `create_card` → `idList: <TRELLO_IN_PROGRESS_LIST_ID>`, `idMembers: <YOUR_TRELLO_MEMBER_ID>`. Save card ID + URL.
+2. **Trello card** _(skip in `--to` / `--pro`)_ — if card exists in context: use its ID (from URL slug). If not: `create_card` → `idList: <TRELLO_IN_PROGRESS_LIST_ID>`, `idMembers: <YOUR_TRELLO_MEMBER_ID>`. Save card ID + URL.
 
-3. **Trello attachments** _(skip if `--sp`)_ — one `add_attachment` per PR not already attached. Name: `<repo> → <base-branch>`.
+3. **Trello attachments** _(skip in `--to` / `--pro`)_ — one `add_attachment` per PR not already attached. Name: `<repo> → <base-branch>`.
 
-4. **Slack main message** _(skip if `--sp`)_ → channel `<SLACK_CHANNEL_ID>`:
+4. **Slack main message** _(skip in `--to` / `--pro`)_ → channel `<SLACK_CHANNEL_ID>`:
    `<emoji> **<Title>**\n\n<1–2 line summary>\n\n<Trello URL>`
    Emoji: `:shield:` security · `:rocket:` features · `:white_check_mark:` fixes · `:tools:` infra
    Save returned `message_ts`.
 
-5. **Slack thread — per repo** _(skip if `--sp`)_:
+5. **Slack thread — per repo** _(skip in `--to` / `--pro`)_:
    `:white_check_mark: **<repo>** — <one-line summary>\n- → \`<branch>\`: <PR URL>`
 
-6. **Slack thread — what changed** _(skip if `--sp`)_:
+6. **Slack thread — what changed** _(skip in `--to` / `--pro`)_:
    `**What changed:**\n- <change>\n- <change>` — one line per change, no descriptions.
 
-7. **Slack thread — CC** _(skip if `--sp`)_ (always last): `cc <@SLACK_CC_USER_ID>` + any extras on the same line.
+7. **Slack thread — CC** _(skip in `--to` / `--pro`)_ (always last): `cc <@SLACK_CC_USER_ID>` + any extras on the same line.
 
-8. **Clockify time entry** _(skip if `--st`)_ — if `--time`/`--t` was passed, use that duration directly. Otherwise ask: `"Clockify: how long did this take? (e.g. 2h, 1.5h, 45m — or 'skip')"`. If not skipped:
+8. **Clockify time entry** _(skip in `--po` / `--pro`)_ — if `--time`/`--t` was passed, use that duration directly. Otherwise ask: `"Clockify: how long did this take? (e.g. 2h, 1.5h, 45m — or 'skip')"`. If not skipped:
    - Detect `projectId` from repo/title context using the project detection rules above. Default to `<PROJECT_ID_MISC>`.
    - Compute `end` = current UTC datetime in ISO 8601 (`date -u +"%Y-%m-%dT%H:%M:%SZ"`). Compute `start` = `end` minus duration.
    - Run via Bash:
