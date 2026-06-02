@@ -107,7 +107,18 @@ Run once to gather evidence. Then analyze. Then trace the specific failing layer
 3. Never stack a fix on a wrong hypothesis
 
 **After 3 failed hypotheses — stop. Do not attempt a fourth.**
-Each fix revealing new coupling in a different place is an architectural signal, not a new bug to chase. Surface the pattern to the user: "3 hypotheses failed. The failure moves — this may be an architectural problem, not a local bug. Here's what I found: [summary]. Recommend discussing before proceeding."
+Each fix revealing new coupling in a different place is an architectural signal, not a local bug to chase.
+
+Output this block and stop:
+
+```
+Architectural signal:  [pattern observed across 3 hypotheses]
+Evidence:              [what moved, what coupling was revealed]
+Conclusion:            Root cause is structural, not local.
+Next step:             Run /feature-discovery to rethink this area before proceeding.
+```
+
+Do not attempt another fix. The problem requires redesign, not another hypothesis.
 
 ---
 
@@ -181,8 +192,8 @@ These thoughts mean you're rationalizing. Stop.
 | "I'll investigate after confirming fix" | Untested hypotheses don't stick. |
 | "Probably X, let me fix that" | Probably ≠ confirmed. |
 | "I don't fully understand but this might work" | This is guessing. Return to Phase 3. |
-| "One more fix attempt" (after 3 failed) | Architecture is the bug. Surface to user, stop fixing symptoms. |
-| Each fix reveals new problem elsewhere | Stop. This is architectural coupling, not a local bug. |
+| "One more fix attempt" (after 3 failed) | Architecture is the bug. Run /feature-discovery. |
+| Each fix reveals new problem elsewhere | Stop. Architectural coupling. Run /feature-discovery. |
 
 ---
 
@@ -195,4 +206,4 @@ These thoughts mean you're rationalizing. Stop.
 5. Never stack a second hypothesis on top of a wrong first — revert and re-diagnose
 6. Never fix code when root cause points outside the codebase — surface findings and stop
 7. Never bundle instrumentation into a bug fix commit — flag as a separate follow-up
-8. Never attempt a 4th hypothesis — after 3 failed, surface the architectural pattern and wait for direction
+8. Never attempt a 4th hypothesis — after 3 failed, output architectural signal block and direct to /feature-discovery
