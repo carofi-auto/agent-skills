@@ -1,6 +1,6 @@
 # triage — Code Diagnosis Skill
 
-Given a ticket, trace the codebase to root cause, then fix. No project management. No handoff. One session.
+Paste or describe any issue. Traces codebase to root cause, outputs a structured diagnosis, waits for your confirmation, then fixes. No guessing. No auto-fix before root cause is confirmed.
 
 ## Install
 
@@ -11,10 +11,10 @@ npx skills add carofi-auto/agent-skills --skill triage
 ## Usage
 
 ```
-/triage <paste ticket text>
+/triage <paste issue, ticket, or freeform description>
 ```
 
-Paste any ADO, Jira, or freeform issue description. The skill classifies, investigates, and fixes without asking questions it can answer itself.
+Works with ADO, Jira, Slack messages, or plain text. Classifies, investigates, and diagnoses without asking questions it can answer itself.
 
 ## What it covers
 
@@ -29,24 +29,28 @@ Paste any ADO, Jira, or freeform issue description. The skill classifies, invest
 
 ## How it works
 
-**Phase 1 — Classify**
-Identifies the issue type (crash, behavior, test failure, integration, resource) and detects sub-type signals: regression vs flaky, environment-specific, cascading failure.
+**Phase 1 — Classify + Reproduce**
+Identifies issue type and confirms reproducibility before touching code. If not reliably reproducible, gathers more data — does not guess.
 
 **Phase 2 — Find entry point**
-For live incidents: reads logs → metrics → recent changes first.
-For isolated bug reports: reads routes/API definitions → keyword inference → asks one specific question only if both fail.
+For live incidents: observability first (logs → metrics → recent deploys).
+For isolated reports: reads structural files → keyword inference → asks one specific question only if both fail.
 
 **Phase 3 — Investigate**
-Traces execution path silently. Only surfaces key findings:
-- Reproduction confirmed
-- Hypothesis ruled out
+Finds a working example first, then forms one hypothesis at a time. Tests minimally. Never stacks a fix on an unconfirmed hypothesis.
+
+For multi-layer systems: adds diagnostic logging at each boundary before tracing logic — only when failure point is ambiguous AND crosses a layer boundary.
+
+Surfaces only:
+- Reproduction confirmed (how and where)
+- Hypothesis ruled out (what and why, with evidence)
 - Unexpected discovery (missing guards, resource leaks, swallowed errors)
-- Blocked (with reason)
+- Blocked (what's missing and why it matters)
 
-No narration. No "now I'm reading X" commentary.
+**3-hypothesis ceiling:** After 3 failed hypotheses, stops and outputs an architectural signal block — directs to `/feature-discovery` instead of attempting a 4th guess.
 
-**Phase 4 — Diagnose**
-Primary: reproduction confirmed + root cause located. Outputs a structured block:
+**Phase 4 — Terminate**
+Root cause confirmed → outputs this block, then **waits for your confirmation**:
 
 ```
 Root cause:    [what the code does wrong and why]
@@ -58,10 +62,12 @@ Rollback:      [instant] | [needs migration]
 Proposed fix:  [one sentence]
 ```
 
-Fallback (when blocked): presents hypothesis + confidence + options and waits for your direction. Always waits for approval before touching user data, transactions, or auth.
+If investigation was long, suggests `/clear` + paste the diagnosis block to start the fix in a clean context.
+
+Fallback (when blocked): presents hypothesis + confidence + options and waits for direction. Always waits for approval before touching user data, transactions, auth, or shared API contracts.
 
 **Phase 5 — Fix**
-Minimal diff. Follows project conventions. Adds instrumentation if the bug was previously silent.
+Executes after you say "fix it". Minimal diff. Follows project conventions. If the bug was previously silent, flags instrumentation as a separate follow-up commit.
 
 ## What you never see
 
@@ -69,6 +75,7 @@ Minimal diff. Follows project conventions. Adds instrumentation if the bug was p
 - "I'm now reading file X..."
 - A fix attempted before root cause is confirmed
 - Refactoring outside the bug scope
+- A 4th hypothesis attempt after 3 have failed
 
 ## Example
 
@@ -78,4 +85,4 @@ Minimal diff. Follows project conventions. Adds instrumentation if the bug was p
          Started appearing after Tuesday's deploy. (ADO #4821)
 ```
 
-Claude checks recent deploy changes, traces auth flow from the login handler, finds the cookie/token ordering race, confirms repro, outputs the diagnosis block, and fixes it.
+Claude checks recent deploy changes, finds a working pre-deploy auth path, compares it to the broken one, traces the token ordering race, confirms repro, outputs the diagnosis block, waits for your "fix it", then applies a minimal patch.

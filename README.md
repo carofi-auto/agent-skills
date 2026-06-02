@@ -20,11 +20,22 @@ npx skills add carofi-auto/agent-skills --skill <skill-name>
 
 | Skill | Description | Install |
 |-------|-------------|---------|
-| [triage](./triage) | Diagnose codebase issues from ticket text — classifies input, traces execution path autonomously, confirms root cause with blast radius and rollback safety, then fixes in the same session | `npx skills add carofi-auto/agent-skills --skill triage` |
-| [feature-discovery](./feature-discovery) | Stress-test a rough idea before committing to a plan — challenges assumptions, probes risks, maintains a live state block, and gates on explicit completion criteria | `npx skills add carofi-auto/agent-skills --skill feature-discovery` |
-| [feature-brief](./feature-brief) | Convert completed discovery into an execution-ready plan — phased tasks, deps table, risk matrix, success metrics, and binary DoD; refuses to proceed if critical unknowns remain | `npx skills add carofi-auto/agent-skills --skill feature-brief` |
+| [triage](./triage) | Paste any issue — classifies, traces to root cause with pattern analysis and one-hypothesis discipline, outputs structured diagnosis block, waits for confirmation, then fixes. Escalates to `/feature-discovery` on architectural signals. | `npx skills add carofi-auto/agent-skills --skill triage` |
+| [feature-discovery](./feature-discovery) | Stress-test a rough idea before committing to a plan — challenges assumptions one question at a time, probes risks, maintains a live state block, and gates on explicit completion criteria | `npx skills add carofi-auto/agent-skills --skill feature-discovery` |
+| [feature-plan](./feature-plan) | Convert completed discovery into an execution-ready plan — phased tasks, deps table, risk matrix, success metrics, and binary DoD; refuses to proceed if critical unknowns remain | `npx skills add carofi-auto/agent-skills --skill feature-plan` |
 | [paymob](./paymob) | Paymob payment integration for MENA — intentions, checkout flows, HMAC-verified webhooks, payment links | `npx skills add carofi-auto/agent-skills --skill paymob` |
 | [wd](./wd) | Post work-done announcements to Slack, create Trello cards, and log billable time to Clockify — with bulk backfill via `--rt` | `npx skills add carofi-auto/agent-skills --skill wd` |
+
+## Recommended workflow
+
+```
+New feature:
+/feature-discovery → /clear → /feature-plan → /clear → /executing-plans
+
+Bug:
+/triage → (local fix) confirm → fix
+       → (architectural) /feature-discovery
+```
 
 ## Contributing
 
@@ -33,6 +44,7 @@ Each skill lives in its own directory:
 ```
 <skill-name>/
 ├── SKILL.md          # agent instructions (required)
+├── README.md         # human-readable description (required)
 └── references/       # supporting docs the agent reads on demand (optional)
 ```
 
