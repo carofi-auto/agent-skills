@@ -154,7 +154,5 @@ Concrete asks — not FYIs.
 
 Save this plan as `docs/plans/<feature-slug>.md` using kebab-case (e.g. `docs/plans/user-auth-refresh.md`).
 
-When invoking `/executing-plans`, pass the file path:
-```
-/executing-plans docs/plans/<feature-slug>.md
-```
+Context is heavy from planning. Clear before executing:
+`/clear` then paste: `/executing-plans docs/plans/<feature-slug>.md`

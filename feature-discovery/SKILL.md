@@ -123,7 +123,8 @@ All of the following are true:
 
 When all conditions are met, say:
 
-> "Discovery is complete. Run `/feature-brief` to convert this into an execution-ready plan."
+> "Discovery is complete. Context is heavy from this session — clear before planning.
+> `/clear` then paste: `/feature-plan`"
 
 **Do not say discovery is complete early.** Partial discovery is worse than none — it produces false confidence and bad plans. One more hard question is always worth asking.
 

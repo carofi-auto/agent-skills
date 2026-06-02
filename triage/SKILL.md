@@ -140,6 +140,9 @@ Proposed fix:  [one sentence]
 
 Do not proceed to fix until user confirms.
 
+If investigation was long, suggest clearing before the fix — the diagnosis block above is the full artifact needed to resume:
+`/clear` then paste the diagnosis block followed by `fix it`.
+
 ### Fallback path
 
 Trigger: can't reproduce, ambiguous code path, needs data only observable in production (live traffic, real user payloads, prod env vars).
