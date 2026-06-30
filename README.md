@@ -23,6 +23,7 @@ npx skills add carofi-auto/agent-skills --skill <skill-name>
 | [triage](./triage) | Paste any issue — classifies, traces to root cause with pattern analysis and one-hypothesis discipline, outputs structured diagnosis block, waits for confirmation, then fixes. Escalates to `/feature-discovery` on architectural signals. | `npx skills add carofi-auto/agent-skills --skill triage` |
 | [feature-discovery](./feature-discovery) | Stress-test a rough idea before committing to a plan — challenges assumptions one question at a time, probes risks, maintains a live state block, and gates on explicit completion criteria | `npx skills add carofi-auto/agent-skills --skill feature-discovery` |
 | [feature-plan](./feature-plan) | Convert completed discovery into an execution-ready plan — phased tasks, deps table, risk matrix, success metrics, and binary DoD; refuses to proceed if critical unknowns remain | `npx skills add carofi-auto/agent-skills --skill feature-plan` |
+| [pr-review](./pr-review) | Self-review your branch before raising a PR — runs on your local diff, reviews design before lines, scans every changed line for real bugs, security holes, missing tests, and over-engineering, filters out nits and CI-caught noise, and reports severity-tagged findings plus a ready-to-raise verdict. Local only; no CI, no posting. | `npx skills add carofi-auto/agent-skills --skill pr-review` |
 | [paymob](./paymob) | Paymob payment integration for MENA — intentions, checkout flows, HMAC-verified webhooks, payment links | `npx skills add carofi-auto/agent-skills --skill paymob` |
 | [wd](./wd) | Post work-done announcements to Slack, create Trello cards, and log billable time to Clockify — with bulk backfill via `--rt` | `npx skills add carofi-auto/agent-skills --skill wd` |
 
@@ -35,6 +36,9 @@ New feature:
 Bug:
 /triage → (local fix) confirm → fix
        → (architectural) /feature-discovery
+
+Before raising a PR:
+/pr-review (self-review local diff) → fix blockers → raise a clean PR
 ```
 
 ## Contributing
